@@ -25,203 +25,210 @@
     --plum-bg:#E8DCE6;
     --gray:#5B5648;
     --gray-bg:#E7E2D5;
+    --sidebar-bg:#241F16;
+    --sidebar-line:#3A331F;
+    --sidebar-text:#C9BFA8;
     --radius:14px;
+    --sidebar-w:222px;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
+  html,body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  button, input, select, textarea{font-family:inherit;}
+
+  .app-shell{display:flex; min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:var(--sidebar-w); flex-shrink:0; background:var(--sidebar-bg); color:var(--sidebar-text);
+    padding:18px 12px; position:fixed; top:0; left:0; height:100vh; overflow-y:auto; z-index:30;
+    transform:translateX(0); transition:transform 0.22s ease;
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(180,160,120,0.07) 28px);
-    pointer-events:none;
-    z-index:0;
+  .brand{padding:6px 10px 18px; border-bottom:1px solid var(--sidebar-line); margin-bottom:14px;}
+  .brand-title{font-family:'Fraunces',serif; font-weight:700; font-size:18px; color:#F2ECDC; outline:none;}
+  .brand-sub{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:#8C8268; margin-top:3px;}
+  .nav-btn{
+    display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:none; border:none;
+    color:var(--sidebar-text); font-size:14px; font-weight:500; padding:10px 12px; border-radius:10px; cursor:pointer;
+    margin-bottom:2px; border-left:3px solid transparent;
   }
-  #app{position:relative; z-index:1; max-width:560px; margin:0 auto; padding:18px 14px 90px;}
-  .ledger-title{
-    font-family:'Fraunces',serif;
-    font-weight:700;
-    font-size:26px;
-    letter-spacing:-0.01em;
-    margin:4px 0 2px;
-    cursor:text;
-    display:inline-block;
+  .nav-btn .ic{font-size:15px; width:18px; text-align:center;}
+  .nav-btn.active{background:#332C1C; color:#F2ECDC; border-left-color:var(--brass);}
+  .nav-btn:hover{background:#2C2718;}
+  .sidebar-foot{margin-top:18px; padding:12px; border-top:1px solid var(--sidebar-line); font-size:11.5px; color:#8C8268; line-height:1.5;}
+
+  .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(20,16,8,0.5); z-index:25;}
+
+  /* ---------- Main ---------- */
+  .main{margin-left:var(--sidebar-w); flex:1; min-width:0;}
+  .topbar{
+    display:flex; align-items:center; gap:10px; padding:14px 20px; border-bottom:1px solid var(--line);
+    background:var(--bg); position:sticky; top:0; z-index:15;
   }
-  .ledger-sub{
-    font-family:'JetBrains Mono',monospace;
-    font-size:12px;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-    letter-spacing:0.06em;
+  .hamburger{display:none;}
+  .page-title{font-family:'Fraunces',serif; font-weight:700; font-size:21px;}
+  .page-sub{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em;}
+  .page-body{padding:18px 20px 60px; max-width:1100px;}
+
+  @media (max-width:880px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .sidebar-backdrop.show{display:block;}
+    .main{margin-left:0;}
+    .hamburger{display:flex;}
   }
-  .tabs{
-    display:flex;
-    gap:6px;
-    margin:18px 0 16px;
-    overflow-x:auto;
-    border-bottom:1px solid var(--line);
-    padding-bottom:0;
-  }
-  .tab-btn{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:14px;
-    background:none;
-    border:none;
-    padding:8px 10px 10px;
-    color:var(--ink-soft);
-    cursor:pointer;
-    white-space:nowrap;
-    border-bottom:3px solid transparent;
-    margin-bottom:-1px;
-  }
-  .tab-btn.active{color:var(--ink); border-bottom-color:var(--brass);}
-  .tab-btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
-    outline:2px solid var(--denim); outline-offset:2px;
-  }
-  .card{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:14px 14px 12px;
-    margin-bottom:12px;
-    box-shadow:0 1px 0 rgba(60,50,30,0.04);
-  }
-  .tab-card{position:relative; padding-top:18px;}
-  .role-tab{
-    position:absolute; top:-1px; left:14px;
-    font-family:'JetBrains Mono',monospace;
-    font-size:10px;
-    font-weight:500;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    padding:3px 9px 4px;
-    border-radius:0 0 8px 8px;
-  }
-  .row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-  .name-line{font-family:'Fraunces',serif; font-weight:600; font-size:17px;}
-  .meta-line{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
-  .pill{
-    display:inline-block; font-size:11px; font-family:'JetBrains Mono',monospace;
-    padding:2px 7px; border-radius:20px; margin-right:4px; margin-top:4px;
-  }
+
+  /* ---------- shared bits ---------- */
   .icon-btn{
-    background:none; border:1px solid var(--line); border-radius:8px;
-    width:30px; height:30px; font-size:15px; cursor:pointer; color:var(--ink-soft);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    background:none; border:1px solid var(--line); border-radius:8px; width:32px; height:32px; font-size:15px;
+    cursor:pointer; color:var(--ink-soft); display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
   .icon-btn:active{background:var(--gray-bg);}
-  .btn{
-    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
-    border:none; border-radius:10px; padding:10px 16px; cursor:pointer;
-  }
+  .btn{font-weight:600; font-size:13.5px; border:none; border-radius:10px; padding:10px 16px; cursor:pointer;}
   .btn-primary{background:var(--ink); color:var(--bg);}
   .btn-ghost{background:none; border:1px solid var(--line); color:var(--ink);}
   .btn-block{width:100%;}
-  .btn-sm{padding:6px 11px; font-size:12.5px; border-radius:8px;}
-  .day-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
-  .day-nav .label{font-family:'Fraunces',serif; font-weight:600; font-size:18px;}
-  .day-nav .sub{font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;}
-  .empty{
-    text-align:center; padding:30px 16px; color:var(--ink-soft); font-size:13.5px;
-    border:1.5px dashed var(--line); border-radius:var(--radius);
-  }
-  .task-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);}
-  .task-row:last-child{border-bottom:none;}
-  .checkbox{
-    width:20px; height:20px; border-radius:6px; border:1.5px solid var(--ink-soft);
-    flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px;
-  }
-  .checkbox.done{background:var(--sage); border-color:var(--sage); color:white;}
-  .task-text{flex:1; font-size:14px;}
-  .task-text.done{color:var(--ink-soft); text-decoration:line-through;}
-  .week-grid{display:flex; flex-direction:column; gap:8px;}
-  .week-day{
-    background:var(--surface); border:1px solid var(--line); border-radius:12px;
-    padding:10px 12px; cursor:pointer;
-  }
-  .week-day.is-today{border-color:var(--brass); box-shadow:0 0 0 1px var(--brass) inset;}
-  .week-day-head{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); margin-bottom:5px;}
-  .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-  .month-head{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-soft); text-align:center; padding-bottom:4px;}
-  .month-cell{
-    aspect-ratio:1; border-radius:9px; border:1px solid var(--line); background:var(--surface);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;
-    font-size:13px; gap:3px; position:relative;
-  }
-  .month-cell.muted{opacity:0.35;}
-  .month-cell.is-today{border:1.5px solid var(--brass);}
-  .month-cell.is-selected{background:var(--gray-bg);}
-  .dots{display:flex; gap:2px; flex-wrap:wrap; justify-content:center; max-width:28px;}
-  .dot{width:5px; height:5px; border-radius:50%;}
-  .field{margin-bottom:12px;}
-  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em;}
-  .field input, .field select, .field textarea{
-    width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:9px;
-    font-family:'Inter',sans-serif; font-size:14.5px; background:var(--surface); color:var(--ink);
-  }
-  .day-chips{display:flex; gap:5px; flex-wrap:wrap;}
-  .day-chip{
-    width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
-    font-size:12px; font-weight:600; cursor:pointer; color:var(--ink-soft);
-  }
-  .day-chip.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
-  .sheet-backdrop{
-    position:fixed; inset:0; background:rgba(30,25,15,0.45); z-index:10;
-    display:flex; align-items:flex-end; justify-content:center;
-  }
-  .sheet{
-    background:var(--bg); width:100%; max-width:560px; border-radius:20px 20px 0 0;
-    padding:18px 16px 24px; max-height:88vh; overflow-y:auto;
-  }
-  .sheet-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
-  .sheet-head h3{font-family:'Fraunces',serif; font-size:19px; margin:0;}
-  .fab{
-    position:fixed; bottom:20px; right:50%; transform:translateX(280px);
-    background:var(--ink); color:var(--bg); border:none; width:52px; height:52px; border-radius:50%;
-    font-size:24px; box-shadow:0 4px 14px rgba(0,0,0,0.25); cursor:pointer; z-index:5;
-  }
-  @media (max-width:600px){.fab{right:20px; transform:none;}}
-  .stat-row{display:flex; justify-content:space-between; align-items:baseline; padding:8px 0; border-bottom:1px solid var(--line);}
-  .stat-row:last-child{border-bottom:none;}
-  .stat-num{font-family:'JetBrains Mono',monospace; font-weight:500;}
-  .due-pos{color:var(--clay);}
-  .due-zero{color:var(--sage);}
-  .month-switch{display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:14px;}
-  .month-switch .label{font-family:'Fraunces',serif; font-weight:600; font-size:17px; min-width:140px; text-align:center;}
+  .btn-sm{padding:7px 12px; font-size:12.5px; border-radius:8px;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:12px;}
+  .empty{text-align:center; padding:28px 16px; color:var(--ink-soft); font-size:13.5px; border:1.5px dashed var(--line); border-radius:var(--radius);}
+  .pill{display:inline-block; font-size:11px; font-family:'JetBrains Mono',monospace; padding:2px 7px; border-radius:20px; margin-right:4px;}
   .role-Cook{background:var(--brass-bg); color:var(--brass);}
   .role-Gardener{background:var(--sage-bg); color:var(--sage);}
   .role-Housekeeper{background:var(--clay-bg); color:var(--clay);}
   .role-Driver{background:var(--denim-bg); color:var(--denim);}
   .role-Nanny{background:var(--plum-bg); color:var(--plum);}
   .role-Other{background:var(--gray-bg); color:var(--gray);}
-  .dot-Cook{background:var(--brass);} .dot-Gardener{background:var(--sage);}
-  .dot-Housekeeper{background:var(--clay);} .dot-Driver{background:var(--denim);}
-  .dot-Nanny{background:var(--plum);} .dot-Other{background:var(--gray);}
-  @media (prefers-reduced-motion: no-preference){
-    .card, .week-day, .month-cell{transition:transform 0.12s ease;}
+  .badge-flex{background:var(--gray-bg); color:var(--gray);}
+  .badge-regular{background:var(--sage-bg); color:var(--sage);}
+  .badge-paused{background:var(--clay-bg); color:var(--clay);}
+  .avatar{
+    width:34px; height:34px; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:700; flex-shrink:0; font-family:'JetBrains Mono',monospace;
   }
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em;}
+  .field input, .field select, .field textarea{width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:9px; font-size:14.5px; background:var(--surface); color:var(--ink);}
+  .help-text{font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.4;}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .sheet-backdrop{position:fixed; inset:0; background:rgba(30,25,15,0.45); z-index:40; display:flex; align-items:flex-end; justify-content:center;}
+  .sheet{background:var(--bg); width:100%; max-width:520px; border-radius:20px 20px 0 0; padding:18px 16px 24px; max-height:88vh; overflow-y:auto;}
+  .sheet-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .sheet-head h3{font-family:'Fraunces',serif; font-size:19px; margin:0;}
+  .task-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .task-row:last-child{border-bottom:none;}
+  .checkbox{width:20px; height:20px; border-radius:6px; border:1.5px solid var(--ink-soft); flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px;}
+  .checkbox.done{background:var(--sage); border-color:var(--sage); color:white;}
+  .task-text{flex:1; font-size:14px;}
+  .task-text.done{color:var(--ink-soft); text-decoration:line-through;}
+  .stat-row{display:flex; justify-content:space-between; align-items:baseline; padding:8px 0; border-bottom:1px solid var(--line);}
+  .stat-row:last-child{border-bottom:none;}
+  .stat-num{font-family:'JetBrains Mono',monospace; font-weight:500;}
+  .due-pos{color:var(--clay);} .due-zero{color:var(--sage);}
+  .day-chip-row{display:flex; gap:5px; flex-wrap:wrap;}
+  .day-chip{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--surface); font-size:12px; font-weight:600; cursor:pointer; color:var(--ink-soft);}
+  .day-chip.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+
+  /* ---------- Dashboard ---------- */
+  .month-switch{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .month-switch .label{font-family:'Fraunces',serif; font-weight:600; font-size:16px; min-width:130px; text-align:center;}
+  .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; max-width:420px;}
+  .month-head{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-soft); text-align:center; padding-bottom:4px;}
+  .month-cell{aspect-ratio:1; border-radius:9px; border:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; font-size:12.5px; gap:3px;}
+  .month-cell.muted{opacity:0.3; cursor:default;}
+  .month-cell.is-today{border:1.5px solid var(--brass);}
+  .dots{display:flex; gap:2px; flex-wrap:wrap; justify-content:center; max-width:26px;}
+  .dot{width:5px; height:5px; border-radius:50%;}
+
+  /* ---------- Schedule grid ---------- */
+  .sched-toolbar{display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;}
+  .week-label{font-family:'Fraunces',serif; font-weight:600; font-size:16px; min-width:160px; text-align:center;}
+  .staff-chip-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:6px;}
+  .staff-chip{
+    display:flex; align-items:center; gap:8px; background:var(--surface); border:1.5px solid var(--line); border-radius:30px;
+    padding:6px 12px 6px 6px; cursor:pointer; flex-shrink:0; text-align:left;
+  }
+  .staff-chip.active{border-color:var(--ink); box-shadow:0 0 0 1px var(--ink) inset;}
+  .staff-chip .chip-avatar{width:26px; height:26px; border-radius:50%; color:#fff; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; font-family:'JetBrains Mono',monospace;}
+  .staff-chip span{font-size:13px; font-weight:600; line-height:1.2;}
+  .staff-chip small{display:block; font-weight:400; color:var(--ink-soft); font-size:10.5px;}
+  .sched-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);}
+  .sched-grid{display:grid; min-width:780px;}
+  .grid-row{display:grid; grid-template-columns:64px repeat(7, minmax(108px,1fr)); border-bottom:1px solid var(--line);}
+  .grid-row.head-row{border-bottom:1.5px solid var(--ink); position:sticky; top:0; background:var(--surface); z-index:2;}
+  .time-label{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-soft); padding:8px 6px; text-align:right; border-right:1px solid var(--line);}
+  .day-head{text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); padding:8px 4px; border-right:1px solid var(--line); text-transform:uppercase;}
+  .day-head span{display:block; font-family:'Fraunces',serif; font-size:15px; color:var(--ink); font-weight:600;}
+  .day-head.is-today{color:var(--brass); background:var(--brass-bg);}
+  .grid-cell{
+    border-right:1px solid var(--line); min-height:46px; padding:3px; position:relative;
+    display:flex; flex-direction:column; gap:3px; align-items:stretch;
+  }
+  .grid-cell.drop-hover{background:var(--brass-bg);}
+  .cell-add{
+    background:none; border:none; color:var(--ink-soft); opacity:0; font-size:16px; cursor:pointer; width:100%; height:100%;
+    min-height:38px;
+  }
+  .grid-cell:hover .cell-add{opacity:0.6;}
+  .shift-block{
+    border-radius:8px; padding:5px 7px; color:#fff; cursor:grab; touch-action:none; user-select:none;
+    font-size:11.5px; line-height:1.25;
+  }
+  .shift-block.dragging-source{opacity:0.35;}
+  .shift-ghost{opacity:0.92; box-shadow:0 6px 16px rgba(0,0,0,0.25);}
+  .shift-name{font-weight:700;}
+  .shift-task{opacity:0.92;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .nav-btn, .card{transition:background 0.1s ease;}
+  }
+  *:focus-visible{outline:2px solid var(--denim); outline-offset:2px;}
 </style>
 </head>
 <body>
-<div id="app"><div class="empty">Loading your ledger…</div></div>
+<div class="app-shell">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-title" id="titleEdit" contenteditable="true">Home Staff Ledger</div>
+      <div class="brand-sub" id="staffCountSub"></div>
+    </div>
+    <nav>
+      <button class="nav-btn" data-page="dashboard"><span class="ic">&#9670;</span>Dashboard</button>
+      <button class="nav-btn" data-page="schedule"><span class="ic">&#9638;</span>Schedule</button>
+      <button class="nav-btn" data-page="staff"><span class="ic">&#9786;</span>Staff</button>
+      <button class="nav-btn" data-page="pay"><span class="ic">&#36;</span>Pay</button>
+    </nav>
+    <div class="sidebar-foot">Tap and hold a shift block to drag it to a new day or time.</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open menu">&#9776;</button>
+      <div>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="page-sub" id="pageSub"></div>
+      </div>
+    </div>
+    <div class="page-body" id="pageBody"></div>
+  </div>
+</div>
 
 <script>
 const ROLES = ["Cook","Gardener","Housekeeper","Driver","Nanny","Other"];
 const DAY_LABELS = ["S","M","T","W","T","F","S"];
 const DAY_FULL = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const PERSON_COLORS = ["#C2436B","#4C5FA8","#3F8F5F","#C97A2B","#2E8B8B","#7A4F8C","#4A5568","#B5563C"];
+const SCHEDULE_START_HOUR = 6;
+const SCHEDULE_END_HOUR = 21;
 
 let state = null;
-let activeTab = "day";
-let selectedDate = fmtDate(new Date());
+let page = "dashboard";
+let sidebarOpen = false;
+let sheet = null;
+let scheduleAnchor = fmtDate(new Date());
+let scheduleFilterStaffId = null;
+let dashMonthAnchor = fmtDate(new Date());
 let payMonth = todayYM();
-let sheet = null; // {type, payload}
 
 function pad(n){return String(n).padStart(2,"0");}
 function fmtDate(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
@@ -230,9 +237,13 @@ function parseDate(s){const [y,m,d]=s.split("-").map(Number); return new Date(y,
 function escapeHtml(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function uid(){return Math.random().toString(36).slice(2,9);}
 function money(n){return (Math.round((n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});}
+function initials(name){return (name||"").trim().split(/\s+/).slice(0,2).map(p=>p[0]?p[0].toUpperCase():"").join("");}
+function hourLabel(h){const ampm=h>=12?"pm":"am"; let hh=h%12; if(hh===0)hh=12; return hh+ampm;}
+function staffById(id){return state.staff.find(s=>s.id===id);}
+function startOfWeek(dateStr){const d=parseDate(dateStr); d.setDate(d.getDate()-d.getDay()); return d;}
 
 function defaultState(){
-  return { title:"Home Staff Ledger", staff:[], events:{}, payments:[] };
+  return { title:"Home Staff Ledger", staff:[], shifts:[], tasks:{}, payments:[] };
 }
 
 let lastSavedJSON = "";
@@ -245,6 +256,9 @@ async function load(){
   }catch(e){
     state = defaultState();
   }
+  if(!state.shifts) state.shifts = [];
+  if(!state.tasks) state.tasks = {};
+  if(!state.payments) state.payments = [];
   lastSavedJSON = JSON.stringify(state);
   render();
   startPolling();
@@ -253,20 +267,13 @@ async function load(){
 async function save(){
   try{
     lastSavedJSON = JSON.stringify(state);
-    await fetch('/api/data', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: lastSavedJSON
-    });
-  }catch(e){
-    console.error("save failed", e);
-  }
+    await fetch('/api/data', {method:'POST', headers:{'Content-Type':'application/json'}, body:lastSavedJSON});
+  }catch(e){ console.error("save failed", e); }
 }
 
-// Poll every few seconds so changes made on another device show up here too.
 function startPolling(){
   setInterval(async ()=>{
-    if(sheet) return; // don't yank the screen while someone is mid-edit
+    if(sheet) return;
     try{
       const res = await fetch('/api/data');
       const json = await res.json();
@@ -274,289 +281,324 @@ function startPolling(){
       const incomingJSON = JSON.stringify(incoming);
       if(incomingJSON !== lastSavedJSON){
         state = incoming;
+        if(!state.shifts) state.shifts=[]; if(!state.tasks) state.tasks={}; if(!state.payments) state.payments=[];
         lastSavedJSON = incomingJSON;
         render();
       }
-    }catch(e){ /* ignore transient errors */ }
+    }catch(e){}
   }, 5000);
 }
 
-function getEvent(dateStr){
-  if(!state.events[dateStr]) state.events[dateStr] = {extra:[], skip:[], tasks:[]};
-  return state.events[dateStr];
+function getDayTasks(dateStr){
+  if(!state.tasks[dateStr]) state.tasks[dateStr] = [];
+  return state.tasks[dateStr];
 }
 
-function staffById(id){return state.staff.find(s=>s.id===id);}
-
-// who is scheduled on a given date (returns array of staff)
-function scheduledOn(dateStr){
-  const d = parseDate(dateStr);
-  const wd = d.getDay();
-  const ev = state.events[dateStr] || {extra:[], skip:[]};
-  const recurring = state.staff.filter(s => (s.days||[]).includes(wd) && !ev.skip.includes(s.id));
-  const extras = (ev.extra||[]).map(id=>staffById(id)).filter(Boolean).filter(s=>!recurring.includes(s));
-  return [...recurring, ...extras];
-}
-
+// ============ RENDER ROOT ============
 function render(){
-  const app = document.getElementById('app');
-  app.innerHTML = `
-    <div class="row" style="align-items:flex-start;">
-      <div>
-        <div class="ledger-title" contenteditable="true" id="titleEdit">${escapeHtml(state.title)}</div>
-        <div class="ledger-sub">${state.staff.length} on staff &middot; ${new Date().toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'})}</div>
-      </div>
-    </div>
-    <div class="tabs">
-      ${tabBtn('day','Day')}${tabBtn('week','Week')}${tabBtn('month','Month')}${tabBtn('staff','Staff')}${tabBtn('pay','Pay')}
-    </div>
-    <div id="tabBody">${renderTab()}</div>
-    ${activeTab==='staff' ? `<button class="fab" id="addStaffFab" aria-label="Add staff member">+</button>` : ''}
-    ${(activeTab==='day') ? `<button class="fab" id="addTaskFab" aria-label="Add task">+</button>` : ''}
-  `;
-  bindHeader();
-  bindTabBody();
+  document.getElementById('titleEdit').textContent = state.title;
+  document.getElementById('staffCountSub').textContent = state.staff.length + (state.staff.length===1 ? " worker" : " workers");
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  const titles = {dashboard:["Dashboard","Today, this week at a glance"], schedule:["Schedule","Weekly view · drag a shift to reschedule"], staff:["Staff","Everyone who works in the home"], pay:["Pay","Track what's owed and what's been paid"]};
+  document.getElementById('pageTitle').textContent = titles[page][0];
+  document.getElementById('pageSub').textContent = titles[page][1];
+
+  const body = document.getElementById('pageBody');
+  if(page==='dashboard'){ body.innerHTML = renderDashboard(); bindDashboard(); }
+  if(page==='schedule'){ body.innerHTML = renderSchedule(); bindSchedule(); }
+  if(page==='staff'){ body.innerHTML = renderStaffPage(); bindStaffPage(); }
+  if(page==='pay'){ body.innerHTML = renderPay(); bindPay(); }
+
+  document.getElementById('sidebar').classList.toggle('open', sidebarOpen);
+  document.getElementById('sidebarBackdrop').classList.toggle('show', sidebarOpen);
+
   if(sheet) renderSheet(); else removeSheet();
 }
 
-function tabBtn(key,label){
-  return `<button class="tab-btn ${activeTab===key?'active':''}" data-tab="${key}">${label}</button>`;
-}
+document.getElementById('titleEdit').addEventListener('blur', e=>{ state.title = e.target.textContent.trim()||"Home Staff Ledger"; save(); });
+document.getElementById('titleEdit').addEventListener('keydown', e=>{ if(e.key==='Enter'){e.preventDefault(); e.target.blur();} });
+document.querySelectorAll('.nav-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{ page=b.dataset.page; sidebarOpen=false; render(); });
+});
+document.getElementById('hamburgerBtn').addEventListener('click', ()=>{ sidebarOpen=true; render(); });
+document.getElementById('sidebarBackdrop').addEventListener('click', ()=>{ sidebarOpen=false; render(); });
 
-function bindHeader(){
-  const t = document.getElementById('titleEdit');
-  t.addEventListener('blur', ()=>{ state.title = t.textContent.trim() || "Home Staff Ledger"; save(); });
-  t.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); t.blur(); }});
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    b.addEventListener('click', ()=>{ activeTab = b.dataset.tab; render(); });
-  });
-  const fabS = document.getElementById('addStaffFab');
-  if(fabS) fabS.addEventListener('click', ()=>{ openSheet('editStaff', {id:null}); });
-  const fabT = document.getElementById('addTaskFab');
-  if(fabT) fabT.addEventListener('click', ()=>{ openSheet('addTask', {date:selectedDate}); });
-}
-
-function renderTab(){
-  if(activeTab==='day') return renderDay();
-  if(activeTab==='week') return renderWeek();
-  if(activeTab==='month') return renderMonth();
-  if(activeTab==='staff') return renderStaffList();
-  if(activeTab==='pay') return renderPay();
-  return '';
-}
-
-// ---------- DAY ----------
-function renderDay(){
-  const d = parseDate(selectedDate);
-  const isToday = selectedDate === fmtDate(new Date());
-  const list = scheduledOn(selectedDate);
-  const ev = getEvent(selectedDate);
-  const tasks = ev.tasks || [];
-  return `
-    <div class="day-nav">
-      <button class="icon-btn" id="prevDay">&#8249;</button>
-      <div style="text-align:center;">
-        <div class="label">${DAY_FULL[d.getDay()]}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}</div>
-        <div class="sub">${isToday ? 'TODAY' : selectedDate}</div>
-      </div>
-      <button class="icon-btn" id="nextDay">&#8250;</button>
-    </div>
-    ${!isToday ? `<button class="btn btn-ghost btn-sm btn-block" id="jumpToday" style="margin-bottom:14px;">Jump to today</button>` : ''}
-    <div class="meta-line" style="margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; font-size:11px;">Scheduled (${list.length})</div>
-    ${list.length === 0 ? `<div class="empty">Nobody's scheduled. Tap a staff card below to add someone for today.</div>` :
-      list.map(s=>`
-        <div class="card row">
-          <div>
-            <span class="pill role-${s.role}">${s.role}</span>
-            <div class="name-line">${escapeHtml(s.name)}</div>
-            <div class="meta-line">${s.time ? escapeHtml(s.time) : 'No time set'}</div>
-          </div>
-          <button class="icon-btn" data-remove-today="${s.id}" aria-label="Remove from today">&times;</button>
-        </div>
-      `).join('')
-    }
-    <button class="btn btn-ghost btn-block" id="addExtraStaff" style="margin:8px 0 18px;">+ Add someone for today</button>
-    <div class="meta-line" style="margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; font-size:11px;">Tasks</div>
-    ${tasks.length===0 ? `<div class="empty">No tasks yet for this day.</div>` :
-      `<div class="card">${tasks.map(t=>`
-        <div class="task-row">
-          <div class="checkbox ${t.done?'done':''}" data-toggle-task="${t.id}">${t.done?'&check;':''}</div>
-          <div class="task-text ${t.done?'done':''}">${escapeHtml(t.text)}${t.staffId && staffById(t.staffId) ? ` <span class="meta-line">— ${escapeHtml(staffById(t.staffId).name)}</span>` : ''}</div>
-          <button class="icon-btn" data-del-task="${t.id}" aria-label="Delete task">&times;</button>
-        </div>
-      `).join('')}</div>`
-    }
-  `;
-}
-
-function bindDay(){
-  document.getElementById('prevDay').addEventListener('click', ()=>{ shiftDay(-1); });
-  document.getElementById('nextDay').addEventListener('click', ()=>{ shiftDay(1); });
-  const jt = document.getElementById('jumpToday'); if(jt) jt.addEventListener('click', ()=>{ selectedDate = fmtDate(new Date()); render(); });
-  document.getElementById('addExtraStaff').addEventListener('click', ()=>{ openSheet('addExtra', {date:selectedDate}); });
-  document.querySelectorAll('[data-remove-today]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const id = b.dataset.removeToday;
-      const ev = getEvent(selectedDate);
-      const d = parseDate(selectedDate);
-      const isRecurring = (staffById(id)?.days||[]).includes(d.getDay());
-      if(isRecurring){ if(!ev.skip.includes(id)) ev.skip.push(id); }
-      ev.extra = ev.extra.filter(x=>x!==id);
-      save(); render();
-    });
-  });
-  document.querySelectorAll('[data-toggle-task]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const ev = getEvent(selectedDate);
-      const t = ev.tasks.find(t=>t.id===b.dataset.toggleTask);
-      if(t){ t.done = !t.done; save(); render(); }
-    });
-  });
-  document.querySelectorAll('[data-del-task]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const ev = getEvent(selectedDate);
-      ev.tasks = ev.tasks.filter(t=>t.id!==b.dataset.delTask);
-      save(); render();
-    });
-  });
-}
-function shiftDay(delta){
-  const d = parseDate(selectedDate);
-  d.setDate(d.getDate()+delta);
-  selectedDate = fmtDate(d);
-  render();
-}
-
-// ---------- WEEK ----------
-function startOfWeek(dateStr){
-  const d = parseDate(dateStr);
-  d.setDate(d.getDate()-d.getDay());
-  return d;
-}
-function renderWeek(){
-  const start = startOfWeek(selectedDate);
+// ============ DASHBOARD ============
+function renderDashboard(){
   const todayStr = fmtDate(new Date());
-  let html = '<div class="week-grid">';
-  for(let i=0;i<7;i++){
-    const d = new Date(start); d.setDate(start.getDate()+i);
-    const ds = fmtDate(d);
-    const list = scheduledOn(ds);
-    html += `
-      <div class="week-day ${ds===todayStr?'is-today':''}" data-week-day="${ds}">
-        <div class="week-day-head"><span>${DAY_FULL[i]} ${d.getDate()}</span><span>${list.length} scheduled</span></div>
-        ${list.length===0 ? '<div class="meta-line">Nobody scheduled</div>' :
-          `<div>${list.map(s=>`<span class="pill role-${s.role}">${escapeHtml(s.name)}</span>`).join('')}</div>`}
-      </div>
-    `;
-  }
-  html += '</div>';
-  html += `<div class="row" style="margin-top:14px;">
-    <button class="btn btn-ghost btn-sm" id="prevWeek">&#8249; Prev week</button>
-    <button class="btn btn-ghost btn-sm" id="nextWeek">Next week &#8250;</button>
-  </div>`;
-  return html;
-}
-function bindWeek(){
-  document.querySelectorAll('[data-week-day]').forEach(el=>{
-    el.addEventListener('click', ()=>{ selectedDate = el.dataset.weekDay; activeTab='day'; render(); });
-  });
-  document.getElementById('prevWeek').addEventListener('click', ()=>{ shiftDay(-7); });
-  document.getElementById('nextWeek').addEventListener('click', ()=>{ shiftDay(7); });
-}
+  const todayShifts = state.shifts.filter(s=>s.date===todayStr).sort((a,b)=>a.hour-b.hour);
+  const tasks = getDayTasks(todayStr);
 
-// ---------- MONTH ----------
-function renderMonth(){
-  const d = parseDate(selectedDate);
-  const year = d.getFullYear(), month = d.getMonth();
-  const first = new Date(year, month, 1);
+  const d = parseDate(dashMonthAnchor);
+  const year=d.getFullYear(), month=d.getMonth();
+  const first = new Date(year,month,1);
   const startOffset = first.getDay();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const todayStr = fmtDate(new Date());
+  const daysInMonth = new Date(year,month+1,0).getDate();
   let cells = '';
   for(let i=0;i<startOffset;i++) cells += `<div class="month-cell muted"></div>`;
   for(let day=1; day<=daysInMonth; day++){
     const ds = year+"-"+pad(month+1)+"-"+pad(day);
-    const list = scheduledOn(ds);
-    const dots = list.slice(0,6).map(s=>`<span class="dot dot-${s.role}"></span>`).join('');
-    cells += `<div class="month-cell ${ds===todayStr?'is-today':''} ${ds===selectedDate?'is-selected':''}" data-month-day="${ds}">
-      <span>${day}</span><div class="dots">${dots}</div>
-    </div>`;
+    const dayShifts = state.shifts.filter(s=>s.date===ds);
+    const seen = new Set();
+    const dots = dayShifts.filter(s=>{ if(seen.has(s.staffId)) return false; seen.add(s.staffId); return true; }).slice(0,6)
+      .map(s=>{const st=staffById(s.staffId); return `<span class="dot" style="background:${st?st.color:'#999'}"></span>`;}).join('');
+    cells += `<div class="month-cell ${ds===todayStr?'is-today':''}" data-month-day="${ds}"><span>${day}</span><div class="dots">${dots}</div></div>`;
   }
+
   return `
-    <div class="month-switch">
-      <button class="icon-btn" id="prevMonth">&#8249;</button>
-      <div class="label">${MONTH_NAMES[month]} ${year}</div>
-      <button class="icon-btn" id="nextMonth">&#8250;</button>
+    <div class="card">
+      <div class="row" style="margin-bottom:10px;">
+        <div class="name-line" style="font-family:'Fraunces',serif; font-weight:600; font-size:17px;">Today &middot; ${new Date().toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'})}</div>
+      </div>
+      ${todayShifts.length===0 ? `<div class="empty">Nobody's scheduled today. Go to Schedule to add a shift.</div>` :
+        todayShifts.map(s=>{ const st=staffById(s.staffId); if(!st) return ''; return `
+          <div class="row" style="padding:7px 0; border-bottom:1px solid var(--line);">
+            <div class="row" style="gap:10px; justify-content:flex-start;">
+              <div class="avatar" style="background:${st.color}">${initials(st.name)}</div>
+              <div>
+                <div style="font-weight:600; font-size:14px;">${escapeHtml(st.name)} <span class="pill role-${st.role}">${st.role}</span></div>
+                <div class="help-text" style="margin-top:1px;">${hourLabel(s.hour)} &middot; ${escapeHtml(s.task||'')}</div>
+              </div>
+            </div>
+          </div>`;
+        }).join('')
+      }
     </div>
-    <div class="month-grid">${DAY_LABELS.map(l=>`<div class="month-head">${l}</div>`).join('')}${cells}</div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:8px;">
+        <div class="name-line" style="font-family:'Fraunces',serif; font-weight:600; font-size:15px;">Tasks today</div>
+        <button class="btn btn-ghost btn-sm" id="addTaskBtn">+ Add task</button>
+      </div>
+      ${tasks.length===0 ? `<div class="empty">No tasks yet.</div>` :
+        tasks.map(t=>`
+          <div class="task-row">
+            <div class="checkbox ${t.done?'done':''}" data-toggle-task="${t.id}">${t.done?'&check;':''}</div>
+            <div class="task-text ${t.done?'done':''}">${escapeHtml(t.text)}${t.staffId && staffById(t.staffId) ? ` <span class="help-text">— ${escapeHtml(staffById(t.staffId).name)}</span>`:''}</div>
+            <button class="icon-btn" data-del-task="${t.id}">&times;</button>
+          </div>
+        `).join('')
+      }
+    </div>
+
+    <div class="card">
+      <div class="month-switch">
+        <button class="icon-btn" id="prevDashMonth">&#8249;</button>
+        <div class="label">${MONTH_NAMES[month]} ${year}</div>
+        <button class="icon-btn" id="nextDashMonth">&#8250;</button>
+      </div>
+      <div class="month-grid">${DAY_LABELS.map(l=>`<div class="month-head">${l}</div>`).join('')}${cells}</div>
+      <div class="help-text" style="margin-top:8px;">Tap a date to open that week in Schedule.</div>
+    </div>
   `;
 }
-function bindMonth(){
-  document.getElementById('prevMonth').addEventListener('click', ()=>{ shiftMonth(-1); });
-  document.getElementById('nextMonth').addEventListener('click', ()=>{ shiftMonth(1); });
+function bindDashboard(){
+  const todayStr = fmtDate(new Date());
+  document.getElementById('addTaskBtn').addEventListener('click', ()=>{ openSheet('addTask', {date:todayStr}); });
+  document.querySelectorAll('[data-toggle-task]').forEach(b=>{
+    b.addEventListener('click', ()=>{ const t = getDayTasks(todayStr).find(t=>t.id===b.dataset.toggleTask); if(t){t.done=!t.done; save(); render();} });
+  });
+  document.querySelectorAll('[data-del-task]').forEach(b=>{
+    b.addEventListener('click', ()=>{ state.tasks[todayStr] = getDayTasks(todayStr).filter(t=>t.id!==b.dataset.delTask); save(); render(); });
+  });
+  document.getElementById('prevDashMonth').addEventListener('click', ()=>{ const d=parseDate(dashMonthAnchor); d.setMonth(d.getMonth()-1,1); dashMonthAnchor=fmtDate(d); render(); });
+  document.getElementById('nextDashMonth').addEventListener('click', ()=>{ const d=parseDate(dashMonthAnchor); d.setMonth(d.getMonth()+1,1); dashMonthAnchor=fmtDate(d); render(); });
   document.querySelectorAll('[data-month-day]').forEach(el=>{
-    el.addEventListener('click', ()=>{ selectedDate = el.dataset.monthDay; activeTab='day'; render(); });
+    el.addEventListener('click', ()=>{ scheduleAnchor = el.dataset.monthDay; page='schedule'; render(); });
   });
 }
-function shiftMonth(delta){
-  const d = parseDate(selectedDate);
-  d.setMonth(d.getMonth()+delta, 1);
-  selectedDate = fmtDate(d);
-  render();
-}
 
-// ---------- STAFF ----------
-function renderStaffList(){
-  if(state.staff.length===0) return `<div class="empty">No staff yet. Tap + to add your first worker.</div>`;
-  return state.staff.map(s=>`
-    <div class="card tab-card" data-staff-card="${s.id}">
-      <span class="role-tab role-${s.role}">${s.role}</span>
-      <div class="row">
-        <div>
-          <div class="name-line">${escapeHtml(s.name)}</div>
-          <div class="meta-line">${(s.days||[]).slice().sort().map(i=>DAY_LABELS[i]).join(' ') || 'No regular days'} ${s.time?(' · '+escapeHtml(s.time)):''}</div>
-          <div class="meta-line">${s.payType==='monthly' ? 'Monthly: ' : 'Per day: '}${money(s.payRate||0)}${s.phone?(' · '+escapeHtml(s.phone)):''}</div>
+// ============ SCHEDULE ============
+function renderSchedule(){
+  if(state.staff.length===0){
+    return `<div class="empty">Add your staff first (over on the Staff page), then come back here to build the schedule.</div>`;
+  }
+  const start = startOfWeek(scheduleAnchor);
+  const days = [...Array(7)].map((_,i)=>{ const d=new Date(start); d.setDate(start.getDate()+i); return d; });
+  const dayStrs = days.map(fmtDate);
+  const todayStr = fmtDate(new Date());
+  const activeStaff = state.staff.filter(s=>s.status!=='paused');
+
+  const chips = `<div class="staff-chip-row">
+    <button class="staff-chip ${!scheduleFilterStaffId?'active':''}" data-filter="all"><span>All staff</span></button>
+    ${activeStaff.map(s=>{
+      const count = state.shifts.filter(sh=>sh.staffId===s.id && dayStrs.includes(sh.date)).length;
+      return `<button class="staff-chip ${scheduleFilterStaffId===s.id?'active':''}" data-filter="${s.id}">
+        <span class="chip-avatar" style="background:${s.color}">${initials(s.name)}</span>
+        <span>${escapeHtml(s.name)}<small>${count} shift${count===1?'':'s'} this week</small></span>
+      </button>`;
+    }).join('')}
+  </div>`;
+
+  const weekLabel = `${MONTH_NAMES[days[0].getMonth()].slice(0,3)} ${days[0].getDate()} – ${MONTH_NAMES[days[6].getMonth()].slice(0,3)} ${days[6].getDate()}`;
+
+  let rows = '';
+  for(let h=SCHEDULE_START_HOUR; h<=SCHEDULE_END_HOUR; h++){
+    rows += `<div class="grid-row">
+      <div class="time-label">${hourLabel(h)}</div>
+      ${days.map(d=>{
+        const ds = fmtDate(d);
+        const here = state.shifts.filter(sh=>sh.date===ds && sh.hour===h && (!scheduleFilterStaffId || sh.staffId===scheduleFilterStaffId));
+        return `<div class="grid-cell" data-date="${ds}" data-hour="${h}">
+          ${here.map(sh=>renderShiftBlock(sh)).join('')}
+          ${here.length===0 ? `<button class="cell-add" data-add-date="${ds}" data-add-hour="${h}" aria-label="Add shift">+</button>` : ''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  return `
+    <div class="sched-toolbar">
+      <button class="icon-btn" id="prevWeekBtn">&#8249;</button>
+      <div class="week-label">${weekLabel}</div>
+      <button class="icon-btn" id="nextWeekBtn">&#8250;</button>
+      <button class="btn btn-ghost btn-sm" id="thisWeekBtn">This week</button>
+    </div>
+    ${chips}
+    <div class="sched-scroll">
+      <div class="sched-grid">
+        <div class="grid-row head-row">
+          <div class="time-label"></div>
+          ${days.map(d=>`<div class="day-head ${fmtDate(d)===todayStr?'is-today':''}">${DAY_FULL[d.getDay()]}<span>${d.getDate()}</span></div>`).join('')}
         </div>
-        <button class="icon-btn" data-edit-staff="${s.id}" aria-label="Edit">&#9998;</button>
+        ${rows}
       </div>
     </div>
-  `).join('');
+  `;
 }
-function bindStaff(){
+function renderShiftBlock(sh){
+  const s = staffById(sh.staffId);
+  if(!s) return '';
+  const parts = s.name.trim().split(/\s+/);
+  const shortName = parts[0] + (parts[1] ? ' '+parts[1][0]+'.' : '');
+  return `<div class="shift-block" data-shift="${sh.id}" style="background:${s.color}">
+    <div class="shift-name">${escapeHtml(shortName)}</div>
+    <div class="shift-task">${escapeHtml(sh.task||'')}${sh.duration?(' · '+sh.duration+'h'):''}</div>
+  </div>`;
+}
+function bindSchedule(){
+  const prevBtn = document.getElementById('prevWeekBtn');
+  if(!prevBtn) return;
+  prevBtn.addEventListener('click', ()=>{ shiftScheduleWeek(-7); });
+  document.getElementById('nextWeekBtn').addEventListener('click', ()=>{ shiftScheduleWeek(7); });
+  document.getElementById('thisWeekBtn').addEventListener('click', ()=>{ scheduleAnchor=fmtDate(new Date()); render(); });
+  document.querySelectorAll('[data-filter]').forEach(b=>{
+    b.addEventListener('click', ()=>{ scheduleFilterStaffId = b.dataset.filter==='all' ? null : b.dataset.filter; render(); });
+  });
+  document.querySelectorAll('[data-add-date]').forEach(b=>{
+    b.addEventListener('click', ()=>{ openSheet('addShift', {date:b.dataset.addDate, hour:Number(b.dataset.addHour)}); });
+  });
+  document.querySelectorAll('.shift-block').forEach(bindShiftDrag);
+}
+function shiftScheduleWeek(deltaDays){
+  const d = parseDate(scheduleAnchor); d.setDate(d.getDate()+deltaDays); scheduleAnchor = fmtDate(d); render();
+}
+
+function bindShiftDrag(el){
+  el.addEventListener('pointerdown', (e)=>{
+    const startX=e.clientX, startY=e.clientY;
+    let dragging=false, ghost=null;
+    try{ el.setPointerCapture(e.pointerId); }catch(err){}
+
+    function onMove(ev){
+      const dx=ev.clientX-startX, dy=ev.clientY-startY;
+      if(!dragging && (Math.abs(dx)>6 || Math.abs(dy)>6)){
+        dragging = true;
+        const rect = el.getBoundingClientRect();
+        ghost = el.cloneNode(true);
+        ghost.classList.add('shift-ghost');
+        ghost.style.position='fixed'; ghost.style.pointerEvents='none'; ghost.style.zIndex='50';
+        ghost.style.width = rect.width+'px';
+        document.body.appendChild(ghost);
+        el.classList.add('dragging-source');
+      }
+      if(dragging && ghost){
+        ghost.style.left = (ev.clientX - 30)+'px';
+        ghost.style.top = (ev.clientY - 16)+'px';
+        document.querySelectorAll('.grid-cell.drop-hover').forEach(c=>c.classList.remove('drop-hover'));
+        const under = document.elementFromPoint(ev.clientX, ev.clientY);
+        const cell = under && under.closest('.grid-cell');
+        if(cell) cell.classList.add('drop-hover');
+      }
+    }
+    function onUp(ev){
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.querySelectorAll('.grid-cell.drop-hover').forEach(c=>c.classList.remove('drop-hover'));
+      if(ghost) ghost.remove();
+      el.classList.remove('dragging-source');
+      if(dragging){
+        const under = document.elementFromPoint(ev.clientX, ev.clientY);
+        const cell = under && under.closest('.grid-cell');
+        if(cell){
+          const sh = state.shifts.find(s=>s.id===el.dataset.shift);
+          if(sh){ sh.date = cell.dataset.date; sh.hour = Number(cell.dataset.hour); save(); }
+        }
+        render();
+      } else {
+        openSheet('editShift', {id: el.dataset.shift});
+      }
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+}
+
+// ============ STAFF ============
+function renderStaffPage(){
+  if(state.staff.length===0) return `<button class="btn btn-primary" id="addStaffBtn">+ Add your first worker</button><div class="empty" style="margin-top:12px;">No staff yet.</div>`;
+  return `
+    <button class="btn btn-primary" id="addStaffBtn" style="margin-bottom:14px;">+ Add staff member</button>
+    ${state.staff.map(s=>`
+      <div class="card">
+        <div class="row" style="align-items:flex-start;">
+          <div class="row" style="gap:10px; justify-content:flex-start; align-items:flex-start;">
+            <div class="avatar" style="background:${s.color}">${initials(s.name)}</div>
+            <div>
+              <div style="font-weight:600; font-family:'Fraunces',serif; font-size:16px;">${escapeHtml(s.name)}</div>
+              <div style="margin-top:3px;">
+                <span class="pill role-${s.role}">${s.role}</span>
+                <span class="pill ${s.employmentType==='flexible'?'badge-flex':'badge-regular'}">${s.employmentType==='flexible'?'Flexible / on-call':'Regular'}</span>
+                ${s.status==='paused' ? `<span class="pill badge-paused">Paused</span>` : ''}
+              </div>
+              <div class="help-text" style="margin-top:6px;">
+                ${s.phone ? escapeHtml(s.phone)+' · ' : ''}${s.payType==='monthly'?'Monthly':(s.payType==='hourly'?'Per hour':'Per day')}: ${money(s.payRate||0)}
+              </div>
+              ${s.notes ? `<div class="help-text" style="margin-top:3px;">${escapeHtml(s.notes)}</div>` : ''}
+            </div>
+          </div>
+          <button class="icon-btn" data-edit-staff="${s.id}">&#9998;</button>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+function bindStaffPage(){
+  document.getElementById('addStaffBtn').addEventListener('click', ()=>{ openSheet('editStaff', {id:null}); });
   document.querySelectorAll('[data-edit-staff]').forEach(b=>{
     b.addEventListener('click', ()=>{ openSheet('editStaff', {id:b.dataset.editStaff}); });
   });
 }
 
-// ---------- PAY ----------
+// ============ PAY ============
+function computeExpected(s, ym){
+  const monthShifts = state.shifts.filter(sh=>sh.staffId===s.id && sh.date.startsWith(ym));
+  if(s.payType==='monthly') return Number(s.payRate||0);
+  if(s.payType==='hourly') return monthShifts.reduce((a,sh)=>a+Number(sh.duration||1),0) * Number(s.payRate||0);
+  const dates = new Set(monthShifts.map(sh=>sh.date));
+  return dates.size * Number(s.payRate||0);
+}
 function renderPay(){
   const [y,m] = payMonth.split('-').map(Number);
-  const daysInMonth = new Date(y, m, 0).getDate();
-  const isCurrentMonth = payMonth === todayYM();
-  const dayCountThrough = isCurrentMonth ? new Date().getDate() : daysInMonth;
-
-  let rows = state.staff.map(s=>{
+  const rows = state.staff.map(s=>{
     const pays = state.payments.filter(p=>p.staffId===s.id && p.date.startsWith(payMonth));
     const paid = pays.reduce((a,p)=>a+Number(p.amount),0);
-    let expected = 0;
-    if(s.payType==='monthly'){ expected = Number(s.payRate||0); }
-    else {
-      let count=0;
-      for(let day=1; day<=dayCountThrough; day++){
-        const ds = y+"-"+pad(m)+"-"+pad(day);
-        const wd = parseDate(ds).getDay();
-        const ev = state.events[ds];
-        if((s.days||[]).includes(wd) && !(ev && ev.skip && ev.skip.includes(s.id))) count++;
-        else if(ev && ev.extra && ev.extra.includes(s.id)) count++;
-      }
-      expected = count * Number(s.payRate||0);
-    }
-    const due = Math.max(0, expected - paid);
+    const expected = computeExpected(s, payMonth);
+    const due = Math.max(0, expected-paid);
     return {s, paid, expected, due};
   });
   const grandPaid = rows.reduce((a,r)=>a+r.paid,0);
   const grandDue = rows.reduce((a,r)=>a+r.due,0);
-
   return `
     <div class="month-switch">
       <button class="icon-btn" id="prevPayMonth">&#8249;</button>
@@ -573,14 +615,13 @@ function renderPay(){
           <div class="row">
             <div>
               <span class="pill role-${r.s.role}">${r.s.role}</span>
-              <div class="name-line">${escapeHtml(r.s.name)}</div>
-              <div class="meta-line">Expected ${money(r.expected)} · Paid ${money(r.paid)}</div>
+              <div style="font-weight:600; font-family:'Fraunces',serif; font-size:16px;">${escapeHtml(r.s.name)}</div>
+              <div class="help-text">Expected ${money(r.expected)} · Paid ${money(r.paid)}</div>
             </div>
             <button class="btn btn-primary btn-sm" data-log-pay="${r.s.id}">Log payment</button>
           </div>
           <div class="stat-row" style="border-top:1px solid var(--line); margin-top:8px; padding-top:8px;">
-            <span class="meta-line">Outstanding</span>
-            <span class="stat-num ${r.due>0?'due-pos':'due-zero'}">${money(r.due)}</span>
+            <span class="help-text">Outstanding</span><span class="stat-num ${r.due>0?'due-pos':'due-zero'}">${money(r.due)}</span>
           </div>
         </div>
       `).join('')
@@ -590,104 +631,144 @@ function renderPay(){
 function bindPay(){
   document.getElementById('prevPayMonth').addEventListener('click', ()=>{ shiftPayMonth(-1); });
   document.getElementById('nextPayMonth').addEventListener('click', ()=>{ shiftPayMonth(1); });
-  document.querySelectorAll('[data-log-pay]').forEach(b=>{
-    b.addEventListener('click', ()=>{ openSheet('logPay', {staffId:b.dataset.logPay}); });
-  });
+  document.querySelectorAll('[data-log-pay]').forEach(b=>{ b.addEventListener('click', ()=>{ openSheet('logPay', {staffId:b.dataset.logPay}); }); });
 }
 function shiftPayMonth(delta){
   let [y,m] = payMonth.split('-').map(Number);
-  m += delta;
-  if(m<1){m=12; y--;} if(m>12){m=1; y++;}
-  payMonth = y+"-"+pad(m);
-  render();
+  m += delta; if(m<1){m=12;y--;} if(m>12){m=1;y++;}
+  payMonth = y+"-"+pad(m); render();
 }
 
-function bindTabBody(){
-  if(activeTab==='day') bindDay();
-  if(activeTab==='week') bindWeek();
-  if(activeTab==='month') bindMonth();
-  if(activeTab==='staff') bindStaff();
-  if(activeTab==='pay') bindPay();
-}
-
-// ---------- SHEETS (bottom modal forms) ----------
-function openSheet(type, payload){ sheet = {type, payload}; renderSheet(); }
-function closeSheet(){ sheet = null; removeSheet(); }
-function removeSheet(){ const ex = document.getElementById('sheetBackdrop'); if(ex) ex.remove(); }
+// ============ SHEETS ============
+function openSheet(type, payload){ sheet={type,payload}; render(); }
+function closeSheet(){ sheet=null; removeSheet(); }
+function removeSheet(){ const ex=document.getElementById('sheetBackdrop'); if(ex) ex.remove(); }
 
 function renderSheet(){
   removeSheet();
   const div = document.createElement('div');
-  div.id = 'sheetBackdrop';
-  div.className = 'sheet-backdrop';
+  div.id='sheetBackdrop'; div.className='sheet-backdrop';
   div.innerHTML = `<div class="sheet" id="sheetInner"></div>`;
   document.body.appendChild(div);
-  div.addEventListener('click', (e)=>{ if(e.target===div) closeSheet(); });
+  div.addEventListener('click', e=>{ if(e.target===div) closeSheet(); });
   const inner = document.getElementById('sheetInner');
 
   if(sheet.type==='editStaff'){
     const existing = sheet.payload.id ? staffById(sheet.payload.id) : null;
-    const s = existing || {id:null, name:'', role:'Cook', phone:'', payType:'daily', payRate:'', days:[], time:'', notes:''};
+    const s = existing || {id:null, name:'', role:'Cook', phone:'', payType:'daily', payRate:'', employmentType:'regular', status:'active', notes:'', color: PERSON_COLORS[state.staff.length % PERSON_COLORS.length]};
     inner.innerHTML = `
       <div class="sheet-head"><h3>${existing?'Edit':'Add'} staff member</h3><button class="icon-btn" id="closeSheet">&times;</button></div>
       <div class="field"><label>Name</label><input id="f-name" value="${escapeHtml(s.name)}" placeholder="e.g. Maria"/></div>
       <div class="field"><label>Role</label><select id="f-role">${ROLES.map(r=>`<option value="${r}" ${s.role===r?'selected':''}>${r}</option>`).join('')}</select></div>
       <div class="field"><label>Phone</label><input id="f-phone" value="${escapeHtml(s.phone)}" placeholder="optional"/></div>
-      <div class="field"><label>Regular days</label><div class="day-chips">${DAY_LABELS.map((l,i)=>`<button type="button" class="day-chip ${(s.days||[]).includes(i)?'on':''}" data-day="${i}">${l}</button>`).join('')}</div></div>
-      <div class="field"><label>Usual time</label><input id="f-time" value="${escapeHtml(s.time)}" placeholder="e.g. 8am – 2pm"/></div>
-      <div class="field"><label>Pay type</label><select id="f-paytype"><option value="daily" ${s.payType==='daily'?'selected':''}>Per day</option><option value="monthly" ${s.payType==='monthly'?'selected':''}>Monthly salary</option></select></div>
+      <div class="field">
+        <label>Work pattern</label>
+        <select id="f-employment">
+          <option value="regular" ${s.employmentType==='regular'?'selected':''}>Regular — works a steady pattern</option>
+          <option value="flexible" ${s.employmentType==='flexible'?'selected':''}>Flexible / on-call — comes in as needed</option>
+        </select>
+        <div class="help-text">This just changes the default when you add a shift for them — regular staff default to repeating weekly, flexible staff default to one-off. Nothing is locked in either way.</div>
+      </div>
+      <div class="field"><label>Status</label><select id="f-status"><option value="active" ${s.status!=='paused'?'selected':''}>Active</option><option value="paused" ${s.status==='paused'?'selected':''}>Paused (keep history, hide from new shifts)</option></select></div>
+      <div class="field"><label>Pay type</label><select id="f-paytype">
+        <option value="daily" ${s.payType==='daily'?'selected':''}>Per day worked</option>
+        <option value="hourly" ${s.payType==='hourly'?'selected':''}>Per hour worked</option>
+        <option value="monthly" ${s.payType==='monthly'?'selected':''}>Fixed monthly salary</option>
+      </select></div>
       <div class="field"><label>Pay rate</label><input id="f-payrate" type="number" inputmode="decimal" value="${s.payRate}" placeholder="0"/></div>
-      <div class="field"><label>Notes</label><textarea id="f-notes" rows="2" placeholder="optional">${escapeHtml(s.notes||'')}</textarea></div>
+      <div class="field"><label>Notes</label><textarea id="f-notes" rows="2" placeholder="e.g. usually free Tue/Thu mornings">${escapeHtml(s.notes||'')}</textarea></div>
       <button class="btn btn-primary btn-block" id="saveStaff">Save</button>
       ${existing ? `<button class="btn btn-ghost btn-block" id="deleteStaff" style="margin-top:8px; color:var(--clay);">Remove staff member</button>` : ''}
     `;
-    let selDays = new Set(s.days||[]);
-    inner.querySelectorAll('[data-day]').forEach(chip=>{
-      chip.addEventListener('click', ()=>{
-        const i = Number(chip.dataset.day);
-        if(selDays.has(i)){selDays.delete(i); chip.classList.remove('on');} else {selDays.add(i); chip.classList.add('on');}
-      });
-    });
     document.getElementById('saveStaff').addEventListener('click', ()=>{
       const name = document.getElementById('f-name').value.trim();
       if(!name){ document.getElementById('f-name').focus(); return; }
       const obj = {
-        id: s.id || uid(),
-        name,
+        id: s.id || uid(), name,
         role: document.getElementById('f-role').value,
         phone: document.getElementById('f-phone').value.trim(),
-        days: Array.from(selDays),
-        time: document.getElementById('f-time').value.trim(),
+        employmentType: document.getElementById('f-employment').value,
+        status: document.getElementById('f-status').value,
         payType: document.getElementById('f-paytype').value,
         payRate: Number(document.getElementById('f-payrate').value)||0,
-        notes: document.getElementById('f-notes').value.trim()
+        notes: document.getElementById('f-notes').value.trim(),
+        color: s.color
       };
-      if(existing){ Object.assign(existing, obj); }
-      else { state.staff.push(obj); }
+      if(existing){ Object.assign(existing, obj); } else { state.staff.push(obj); }
       save(); closeSheet(); render();
     });
     const delBtn = document.getElementById('deleteStaff');
-    if(delBtn) delBtn.addEventListener('click', ()=>{
-      state.staff = state.staff.filter(x=>x.id!==s.id);
+    if(delBtn) delBtn.addEventListener('click', ()=>{ state.staff = state.staff.filter(x=>x.id!==s.id); save(); closeSheet(); render(); });
+  }
+
+  if(sheet.type==='addShift'){
+    const {date, hour} = sheet.payload;
+    const activeStaff = state.staff.filter(s=>s.status!=='paused');
+    const preselect = scheduleFilterStaffId || (activeStaff[0] && activeStaff[0].id) || '';
+    const preStaff = staffById(preselect);
+    inner.innerHTML = `
+      <div class="sheet-head"><h3>Add shift — ${date}</h3><button class="icon-btn" id="closeSheet">&times;</button></div>
+      <div class="field"><label>Staff</label><select id="f-staff">${activeStaff.map(s=>`<option value="${s.id}" ${s.id===preselect?'selected':''}>${escapeHtml(s.name)}</option>`).join('')}</select></div>
+      <div class="field"><label>Task</label><input id="f-task" placeholder="e.g. Interior painting"/></div>
+      <div class="field"><label>Start time</label><select id="f-hour">${[...Array(SCHEDULE_END_HOUR-SCHEDULE_START_HOUR+1)].map((_,i)=>{const h=SCHEDULE_START_HOUR+i; return `<option value="${h}" ${h===hour?'selected':''}>${hourLabel(h)}</option>`;}).join('')}</select></div>
+      <div class="field"><label>Duration (hours)</label><select id="f-duration">${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}" ${n===2?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div class="field">
+        <label><input type="checkbox" id="f-repeat" style="width:auto; margin-right:6px;" ${preStaff && preStaff.employmentType==='regular' ? 'checked':''}/> Repeat weekly on this day</label>
+        <input id="f-repeat-until" type="date" style="margin-top:8px;" ${preStaff && preStaff.employmentType==='regular' ? '' : 'disabled'}/>
+        <div class="help-text">If checked, this shift repeats every week up to the date above. You can still drag or delete any single one later — repeating just saves you re-adding it by hand.</div>
+      </div>
+      <button class="btn btn-primary btn-block" id="saveShift">Add shift</button>
+    `;
+    const staffSel = document.getElementById('f-staff');
+    const repeatChk = document.getElementById('f-repeat');
+    const repeatUntil = document.getElementById('f-repeat-until');
+    staffSel.addEventListener('change', ()=>{
+      const st = staffById(staffSel.value);
+      repeatChk.checked = st && st.employmentType==='regular';
+      repeatUntil.disabled = !repeatChk.checked;
+    });
+    repeatChk.addEventListener('change', ()=>{ repeatUntil.disabled = !repeatChk.checked; });
+    document.getElementById('saveShift').addEventListener('click', ()=>{
+      const staffId = staffSel.value;
+      if(!staffId) return;
+      const task = document.getElementById('f-task').value.trim();
+      const hourVal = Number(document.getElementById('f-hour').value);
+      const duration = Number(document.getElementById('f-duration').value);
+      const makeShift = (d)=>({id:uid(), staffId, date:d, hour:hourVal, duration, task});
+      state.shifts.push(makeShift(date));
+      if(repeatChk.checked && repeatUntil.value){
+        let cur = parseDate(date);
+        const until = parseDate(repeatUntil.value);
+        while(true){
+          cur = new Date(cur); cur.setDate(cur.getDate()+7);
+          if(cur > until) break;
+          state.shifts.push(makeShift(fmtDate(cur)));
+        }
+      }
       save(); closeSheet(); render();
     });
   }
 
-  if(sheet.type==='addExtra'){
-    const date = sheet.payload.date;
-    const already = new Set(scheduledOn(date).map(s=>s.id));
-    const options = state.staff.filter(s=>!already.has(s.id));
+  if(sheet.type==='editShift'){
+    const sh = state.shifts.find(x=>x.id===sheet.payload.id);
+    if(!sh){ closeSheet(); return; }
+    const s = staffById(sh.staffId);
     inner.innerHTML = `
-      <div class="sheet-head"><h3>Add for ${date}</h3><button class="icon-btn" id="closeSheet">&times;</button></div>
-      ${options.length===0 ? `<div class="empty">Everyone is already scheduled for this day.</div>` :
-        options.map(s=>`<button class="btn btn-ghost btn-block" data-pick-extra="${s.id}" style="margin-bottom:8px; text-align:left;">${s.name} <span class="meta-line">· ${s.role}</span></button>`).join('')}
+      <div class="sheet-head"><h3>${s?escapeHtml(s.name):'Shift'} — ${sh.date}</h3><button class="icon-btn" id="closeSheet">&times;</button></div>
+      <div class="field"><label>Task</label><input id="f-task" value="${escapeHtml(sh.task||'')}"/></div>
+      <div class="field"><label>Start time</label><select id="f-hour">${[...Array(SCHEDULE_END_HOUR-SCHEDULE_START_HOUR+1)].map((_,i)=>{const h=SCHEDULE_START_HOUR+i; return `<option value="${h}" ${h===sh.hour?'selected':''}>${hourLabel(h)}</option>`;}).join('')}</select></div>
+      <div class="field"><label>Duration (hours)</label><select id="f-duration">${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}" ${n===sh.duration?'selected':''}>${n}</option>`).join('')}</select></div>
+      <button class="btn btn-primary btn-block" id="saveShiftEdit">Save changes</button>
+      <button class="btn btn-ghost btn-block" id="deleteShift" style="margin-top:8px; color:var(--clay);">Delete this shift</button>
     `;
-    inner.querySelectorAll('[data-pick-extra]').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        const ev = getEvent(date);
-        if(!ev.extra.includes(b.dataset.pickExtra)) ev.extra.push(b.dataset.pickExtra);
-        save(); closeSheet(); render();
-      });
+    document.getElementById('saveShiftEdit').addEventListener('click', ()=>{
+      sh.task = document.getElementById('f-task').value.trim();
+      sh.hour = Number(document.getElementById('f-hour').value);
+      sh.duration = Number(document.getElementById('f-duration').value);
+      save(); closeSheet(); render();
+    });
+    document.getElementById('deleteShift').addEventListener('click', ()=>{
+      state.shifts = state.shifts.filter(x=>x.id!==sh.id); save(); closeSheet(); render();
     });
   }
 
@@ -695,15 +776,14 @@ function renderSheet(){
     const date = sheet.payload.date;
     inner.innerHTML = `
       <div class="sheet-head"><h3>New task</h3><button class="icon-btn" id="closeSheet">&times;</button></div>
-      <div class="field"><label>Task</label><input id="f-task" placeholder="e.g. Water the front garden"/></div>
+      <div class="field"><label>Task</label><input id="f-tasktext" placeholder="e.g. Water the front garden"/></div>
       <div class="field"><label>Assign to (optional)</label><select id="f-task-staff"><option value="">Nobody specific</option>${state.staff.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('')}</select></div>
       <button class="btn btn-primary btn-block" id="saveTask">Add task</button>
     `;
     document.getElementById('saveTask').addEventListener('click', ()=>{
-      const text = document.getElementById('f-task').value.trim();
+      const text = document.getElementById('f-tasktext').value.trim();
       if(!text) return;
-      const ev = getEvent(date);
-      ev.tasks.push({id:uid(), text, staffId: document.getElementById('f-task-staff').value || null, done:false});
+      getDayTasks(date).push({id:uid(), text, staffId:document.getElementById('f-task-staff').value||null, done:false});
       save(); closeSheet(); render();
     });
   }
