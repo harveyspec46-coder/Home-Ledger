@@ -1,0 +1,16 @@
+{
+  "name": "home-staff-ledger",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:server": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.5.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
