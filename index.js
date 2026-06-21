@@ -1,33 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose'); // 1. Import mongoose
-const app = express();
-
-app.use(express.json()); // Allows your server to accept JSON data
-
-// 2. Point directly to your secret Vercel variable.
-// Keep this exactly as written—do NOT paste your real link here.
-const dbURI = process.env.MONGODB_URI;
-
-// 3. Connect to your MongoDB Atlas cluster
-mongoose.connect(dbURI)
-  .then(() => {
-    console.log("🚀 MongoDB Atlas connected successfully via Vercel!");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-
-// Simple test route to verify the server is live
-app.get('/', (req, res) => {
-    res.send("Server is running smoothly!");
-});
-
-// Start the server (Vercel handles the port automatically, but 5000 is standard for local testing)
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
@@ -64,6 +35,11 @@ app.use(async (req, res, next) => {
     console.error("DB connection error:", e.message);
     res.status(500).json({ error: "Database not connected. Check the MONGODB_URI environment variable." });
   }
+});
+
+// Simple test route to verify the server is live
+app.get('/', (req, res) => {
+    res.send("Server is running smoothly with your full database features!");
 });
 
 // ============ Settings ============
@@ -157,9 +133,6 @@ app.delete('/api/tasks/:id', async (req, res) => {
 });
 
 // ============ Payments ============
-// Every payment is its own permanent record, so "history" is never lost or
-// overwritten — it's just queried different ways below.
-
 app.get('/api/payments', async (req, res) => {
   const q = {};
   if (req.query.staffId) q.staffId = req.query.staffId;
@@ -176,7 +149,6 @@ app.delete('/api/payments/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Collective view: lifetime total, month-by-month total, and per-worker totals
 app.get('/api/payments/summary', async (req, res) => {
   const [all, staff] = await Promise.all([
     Payment.find().sort({ date: -1 }),
@@ -211,11 +183,16 @@ app.get('/api/payments/summary', async (req, res) => {
   res.json({ lifetimeTotal, monthly, byStaff });
 });
 
-// Individual view: every payment ever made to one specific worker
 app.get('/api/payments/staff/:staffId', async (req, res) => {
   const history = await Payment.find({ staffId: req.params.staffId }).sort({ date: -1, createdAt: -1 });
   const total = history.reduce((a, p) => a + p.amount, 0);
   res.json({ total, count: history.length, history });
+});
+
+// Standard local port setup for execution fallback
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server executing locally on port ${PORT}`);
 });
 
 module.exports = app;
