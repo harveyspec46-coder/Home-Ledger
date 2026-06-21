@@ -1,4 +1,33 @@
 const express = require('express');
+const mongoose = require('mongoose'); // 1. Import mongoose
+const app = express();
+
+app.use(express.json()); // Allows your server to accept JSON data
+
+// 2. Point directly to your secret Vercel variable.
+// Keep this exactly as written—do NOT paste your real link here.
+const dbURI = process.env.MONGODB_URI;
+
+// 3. Connect to your MongoDB Atlas cluster
+mongoose.connect(dbURI)
+  .then(() => {
+    console.log("🚀 MongoDB Atlas connected successfully via Vercel!");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+  });
+
+// Simple test route to verify the server is live
+app.get('/', (req, res) => {
+    res.send("Server is running smoothly!");
+});
+
+// Start the server (Vercel handles the port automatically, but 5000 is standard for local testing)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
