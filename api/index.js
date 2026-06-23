@@ -12,6 +12,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ---------- Optional passcode gate ----------
+// If APP_PASSCODE is set in Vercel's environment variables, every request
+// must include a matching x-app-passcode header or it gets rejected.
+// If APP_PASSCODE is not set, the app behaves exactly as before (open).
+const APP_PASSCODE = process.env.APP_PASSCODE || "";
+app.use((req, res, next) => {
+  if (!APP_PASSCODE) return next();
+  const provided = req.headers["x-app-passcode"];
+  if (provided === APP_PASSCODE) return next();
+  return res.status(401).json({ error: "Incorrect passcode" });
+});
+
 // ---------- DB connection, cached across warm serverless invocations ----------
 let connPromise = null;
 function ensureDB() {

@@ -1,4 +1,4 @@
-export const ROLES = ["Cook", "Gardener", "Housekeeper", "Driver", "Nanny", "Other"];
+export const ROLES = ["Cook", "Gardener", "Landscaping", "Housekeeper", "Cleaning", "Handyman", "Contractor", "Driver", "Nanny", "Other"];
 export const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 export const DAY_FULL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export const MONTH_NAMES = [

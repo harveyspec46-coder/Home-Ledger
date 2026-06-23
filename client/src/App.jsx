@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "./api.js";
 import Sidebar from "./components/Sidebar.jsx";
+import Lock from "./components/Lock.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Schedule from "./pages/Schedule.jsx";
 import Staff from "./pages/Staff.jsx";
@@ -20,6 +21,7 @@ export default function App() {
   const [title, setTitle] = useState("Home Staff Ledger");
   const [staff, setStaff] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [locked, setLocked] = useState(false);
   const [scheduleAnchor, setScheduleAnchor] = useState(fmtDate(new Date()));
 
   const loadInitial = useCallback(async () => {
@@ -27,8 +29,13 @@ export default function App() {
       const [settings, staffList] = await Promise.all([api.getSettings(), api.getStaff()]);
       setTitle(settings.title || "Home Staff Ledger");
       setStaff(staffList);
+      setLocked(false);
     } catch (e) {
-      console.error(e);
+      if (e.isAuthError) {
+        setLocked(true);
+      } else {
+        console.error(e);
+      }
     } finally {
       setLoaded(true);
     }
@@ -55,6 +62,9 @@ export default function App() {
 
   if (!loaded) {
     return <div className="empty" style={{ margin: 40 }}>Loading your ledger…</div>;
+  }
+  if (locked) {
+    return <Lock onUnlock={() => { setLoaded(false); loadInitial(); }} />;
   }
 
   const [pageTitle, pageSub] = TITLES[page];

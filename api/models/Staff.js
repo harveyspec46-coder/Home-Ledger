@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ROLES = ["Cook", "Gardener", "Housekeeper", "Driver", "Nanny", "Other"];
+const ROLES = ["Cook", "Gardener", "Landscaping", "Housekeeper", "Cleaning", "Handyman", "Contractor", "Driver", "Nanny", "Other"];
 
 const StaffSchema = new mongoose.Schema(
   {

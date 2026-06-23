@@ -151,3 +151,28 @@ button, input, select, textarea{font-family:inherit;}
 .back-link{background:none; border:none; color:var(--ink-soft); font-size:13px; cursor:pointer; padding:0; margin-bottom:12px; text-decoration:underline;}
 
 *:focus-visible{outline:2px solid var(--denim); outline-offset:2px;}
+  --teal:#2E7D7D; --teal-bg:#D9E8E8;
+  --sky:#3D7EA6; --sky-bg:#D8E8F0;
+  --amber:#C97A2B; --amber-bg:#F2DFC4;
+  --indigo:#4C5FA8; --indigo-bg:#DEE3F2;
+}
+.role-Landscaping{background:var(--teal-bg); color:var(--teal);}
+.role-Cleaning{background:var(--sky-bg); color:var(--sky);}
+.role-Handyman{background:var(--amber-bg); color:var(--amber);}
+.role-Contractor{background:var(--indigo-bg); color:var(--indigo);}
+
+/* ---------- Passcode lock screen ---------- */
+.lock-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg); padding:20px;}
+.lock-card{text-align:center; padding:24px;}
+.lock-title{font-family:'Fraunces',serif; font-weight:600; font-size:19px; margin-bottom:18px; color:var(--ink);}
+.lock-dots{display:flex; gap:14px; justify-content:center; margin-bottom:10px;}
+.lock-dot{width:14px; height:14px; border-radius:50%; border:1.5px solid var(--ink-soft); display:inline-block; background:none;}
+.lock-dot.filled{background:var(--ink); border-color:var(--ink);}
+.lock-dot.err{border-color:var(--clay); background:var(--clay);}
+.lock-error{color:var(--clay); font-size:12.5px; margin-bottom:14px; font-family:'JetBrains Mono',monospace; height:16px;}
+.lock-pad{display:grid; grid-template-columns:repeat(3,64px); gap:14px; justify-content:center; margin-top:10px;}
+.lock-key{width:64px; height:64px; border-radius:50%; border:1px solid var(--line); background:var(--surface); font-size:22px; font-family:'Fraunces',serif; cursor:pointer; color:var(--ink);}
+.lock-key:active{background:var(--gray-bg);}
+.lock-key-empty{visibility:hidden; cursor:default;}
+.lock-key-back{font-size:18px; color:var(--ink-soft);}
+.lock-key:disabled{cursor:default;}
